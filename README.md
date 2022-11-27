@@ -1,4 +1,8 @@
-## Getting Started
+## About
+
+Cohere & Weaviate & Telegram API example project
+
+## Running
 
 Copy env file and fill in missing variables:
 
