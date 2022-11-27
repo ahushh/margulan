@@ -2,7 +2,7 @@
 
 Cohere & Weaviate & Telegram API example project
 
-## Running
+## Usage
 
 Copy env file and fill in missing variables:
 
@@ -10,14 +10,18 @@ Copy env file and fill in missing variables:
 cp .env.example .env
 ```
 
-Install deps and run the development server:
+Install deps, init TG session and initialize DB scheme:
 
 ```bash
-cp .env.example .env
 npm install
 npm run init
-npm run dev
 
+```
+
+Run the development server and open [http://localhost:3000](http://localhost:3000)
+
+```bash
+npm run dev
 ```
 
 Clean Weaviate DB:
