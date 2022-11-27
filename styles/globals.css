@@ -1,0 +1,7 @@
+body, #__next {
+  height: 100vh;
+  max-height: 100vh;
+}
+.ui.cards {
+  overflow-y: auto;
+}
