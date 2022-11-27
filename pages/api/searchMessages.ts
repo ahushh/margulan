@@ -25,9 +25,8 @@ export default async function handler(
     const w = new Weaviate(weaviateHost);
 
     const vector = await cohere.getEmbedding(query);
-    const msgs = await w.search(channel, vector, distance, certainty);
-    const formattedMessages = (msgs ?? []).map(({ text, message_id, _additional: { id } }: any) => ({ text, message_id, id }));
-    res.status(200).json({ messages: formattedMessages })
+    const messages = await w.search(channel, vector, distance, certainty);
+    res.status(200).json({ messages })
   } catch (e) {
     res.status(500).json(e as any);
   }
