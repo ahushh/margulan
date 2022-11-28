@@ -26,8 +26,10 @@ export default async function handler(
     const tg = new TgChannel(apiId, apiHash, session);
     await tg.connect();
     const messages = await tg.fetchMessages(channel);
+    console.log('messages from tg', messages.length);
     const cohere = new Cohere(cohereApiKey, IS_COHERE_TRIAL);
     const messagesWithEmbeddings = await cohere.getMessagesWithEmbeddings(messages);
+    console.log('messagesWithEmbeddings', messagesWithEmbeddings.length);
     const w = new Weaviate(weaviateHost);
     // await w.createSchema();
     await w.importChannelWithMessages(channel, messagesWithEmbeddings);

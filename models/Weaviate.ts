@@ -135,7 +135,7 @@ export class Weaviate {
     let batcher = this.client.batch.objectsBatcher();
     let counter = 0;
     let result: any[] = [];
-    messagesWithEmbeddings.forEach((msg) => {
+    for (const msg of messagesWithEmbeddings) {
       const obj = {
         class: 'Message',
         properties: {
@@ -148,10 +148,10 @@ export class Weaviate {
       batcher = batcher.withObject(obj);
 
       if (counter === Weaviate.BATCHER_MAX) {
-        batcher
+        await batcher
           .do()
           .then((res) => {
-            console.log('importMessages ok');
+            console.log(`Imported ${Weaviate.BATCHER_MAX} messages...`);
             result = [...result, ...res];
           })
           .catch((err) => {
@@ -163,13 +163,13 @@ export class Weaviate {
         batcher = this.client.batch.objectsBatcher();
       }
       counter += 1;
-    });
+    }
 
     return batcher
       .do()
       .then((res) => {
         result = [...result, ...res];
-        console.log('importMessages finished');
+        console.log(`Imported ${result.length} messages to Weaviate in total`);
         return result;
       })
       .catch((err) => {
@@ -178,8 +178,9 @@ export class Weaviate {
   }
 
   async addRefsBetweenChannelAndMessages(channel: any, messages: any[]) {
-    const result: any[] = [];
+    let i = 0;
     for (const msg of messages) {
+      ++i;
       await this.client.data
         .referenceCreator()
         .withClassName('Channel')
@@ -193,8 +194,11 @@ export class Weaviate {
             .payload(),
         )
         .do()
+        .then(() => {
+          console.log(`addRefsBetweenChannelAndMessages: channel2message ${i}/${messages.length} `)
+        })
         .catch((err) => {
-          console.error('addRefsBetweenChannelAndMessages', err);
+          console.error(`addRefsBetweenChannelAndMessages error: channel2message ${i}/${messages.length} `, err);
         });
       await this.client.data
         .referenceCreator()
@@ -209,12 +213,13 @@ export class Weaviate {
             .payload(),
         )
         .do()
-        .then(() => console.log('addRefsBetweenChannelAndMessages ok'))
+        .then(() => {
+          console.log(`addRefsBetweenChannelAndMessages: message2channel ${i}/${messages.length} `)
+        })
         .catch((err) => {
-          console.error('addRefsBetweenChannelAndMessages', err);
+          console.error(`addRefsBetweenChannelAndMessages error: message2channel ${i}/${messages.length} `, err);
         });
     }
-    return result;
   }
 
   async getRelevantMessagesById(channelName: string, id: string, distance?: number, certainty?: number) {
