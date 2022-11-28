@@ -58,3 +58,8 @@ export class TgChannel {
     return formattedMessages;
   }
 }
+
+//  const apiId = +(process.env.TG_API_ID as string);
+// const apiHash = process.env.TG_API_HASH as string;
+// const session = process.env.TG_SESSION as string;
+// export const TgChannel =

@@ -1,6 +1,8 @@
 import Head from 'next/head';
 import styles from '../styles/Home.module.css';
 import 'semantic-ui-css/semantic.min.css';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import {
   Button,
   Card,
@@ -12,6 +14,7 @@ import { useCallback, useEffect, useState } from 'react';
 import superagent from 'superagent';
 import { IChannel } from '../interfaces/Channel';
 import { IMessage } from '../interfaces/Message';
+import Link from '@mui/material/Link/Link';
 
 const MessagePlaceholders = () => (<Segment raised>
   <Placeholder>
@@ -71,18 +74,28 @@ export default function Home() {
     superagent.get('/api/getChannels').then(({ body: { channels } }) => {
       setChannels(channels);
       setIsChannelsLoading(false);
-    }).catch(() => setIsChannelsLoading(false));
+    })
+      .catch((e) => toast('Server Error'))
+      .finally(() => setIsChannelsLoading(false));
   }, []);
 
   const importChannelHandler = useCallback(() => {
+    if (channels.map(({ name }) => name).includes(channelInput)) {
+      toast('Channels is already added')
+      return;
+    }
+    if (channelInput[0] !== '@') {
+      return;
+    }
     setIsImportChannelLoading(true);
     superagent.get(`/api/importChannel?channel=${channelInput}`).then(() => {
       setIsImportChannelLoading(false);
       setChannelInput('');
     })
       .then(getAllChannelsHandler)
-      .catch(() => setIsImportChannelLoading(false));
-  }, [channelInput, getAllChannelsHandler]);
+      .catch((e) => toast('Server Error'))
+      .finally(() => setIsImportChannelLoading(false));
+  }, [channelInput, getAllChannelsHandler, channels]);
 
   const getMessagesByChannel = useCallback(() => {
     setIsMessagesLoading(true);
@@ -90,7 +103,9 @@ export default function Home() {
       setMessages(messages);
       setRelevantMessages([]);
       setIsMessagesLoading(false);
-    }).catch(() => setIsMessagesLoading(false));
+    })
+      .catch((e) => toast('Server Error'))
+      .finally(() => setIsMessagesLoading(false));
   }, [selectedChannel]);
 
   useEffect(() => {
@@ -114,7 +129,9 @@ export default function Home() {
       .then(({ body: { messages } }) => {
         setMessages(messages);
         setIsMessagesLoading(false);
-      }).catch(() => setIsMessagesLoading(false));
+      })
+      .catch((e) => toast('Server Error'))
+      .finally(() => setIsMessagesLoading(false));
 
   }, [certainty, distance, searchInput, searchOptions, selectedChannel]);
 
@@ -134,7 +151,9 @@ export default function Home() {
       .then(({ body: { messages } }) => {
         setRelevantMessages(messages);
         setIsRelevantMessagesLoading(false);
-      }).catch(() => setIsRelevantMessagesLoading(false));
+      })
+      .catch((e) => toast('Server Error'))
+      .finally(() => setIsRelevantMessagesLoading(false));
 
   }, [certainty, distance, searchOptions, selectedChannel]);
 
@@ -177,7 +196,7 @@ export default function Home() {
               />
               <label>Choose a channel to show messages of:</label>
               <Segment loading={isChannelsLoading || isImportChannelLoading} placeholder style={{ justifyContent: 'start' }}>
-                {channels.length === 0 ? <Label horizontal>Import a channel e.g. @MargulanSeissembai</Label> : null}
+                {channels.length === 0 ? <Label horizontal>Import a channel e.g. <Link onClick={() => setChannelInput('@MargulanSeissembai')}>@MargulanSeissembai</Link></Label> : null}
                 <List selection verticalAlign='top' divided>
                   {channels.map((channel: IChannel) => <List.Item key={channel.name} onClick={() => setSelectedChannel(channel.name)}>
                     <List.Icon name='telegram' size='large' verticalAlign='middle' />
@@ -307,6 +326,7 @@ export default function Home() {
           </Grid.Row>
 
         </Grid>
+        <ToastContainer position='bottom-left' />
       </Container >
     </>
   );

@@ -134,6 +134,7 @@ export class Weaviate {
   private async importMessages(messagesWithEmbeddings: any[]) {
     let batcher = this.client.batch.objectsBatcher();
     let counter = 0;
+    let totalImported = 0;
     let result: any[] = [];
     for (const msg of messagesWithEmbeddings) {
       const obj = {
@@ -148,10 +149,11 @@ export class Weaviate {
       batcher = batcher.withObject(obj);
 
       if (counter === Weaviate.BATCHER_MAX) {
+        totalImported += Weaviate.BATCHER_MAX;
         await batcher
           .do()
           .then((res) => {
-            console.log(`Imported ${Weaviate.BATCHER_MAX} messages...`);
+            console.log(`Imported ${Weaviate.BATCHER_MAX} messages ${totalImported}/${messagesWithEmbeddings.length}...`);
             result = [...result, ...res];
           })
           .catch((err) => {

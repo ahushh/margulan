@@ -1,4 +1,4 @@
-import { Weaviate } from '../models/Weaviate';
+import { Weaviate } from '../core/Weaviate';
 import dotenv from 'dotenv';
 dotenv.config();
 

@@ -1,8 +1,8 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { Cohere } from '../../models/Cohere';
-import { TgChannel } from '../../models/TgChannel';
-import { Weaviate } from '../../models/Weaviate';
+import { Cohere } from '../../core/Cohere';
+import { TgChannel } from '../../core/TgChannel';
+import { Weaviate } from '../../core/Weaviate';
 
 
 const apiId = +(process.env.TG_API_ID as string);

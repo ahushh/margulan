@@ -1,4 +1,4 @@
-import { TgChannel } from '../models/TgChannel';
+import { TgChannel } from '../core/TgChannel';
 import dotenv from 'dotenv';
 dotenv.config();
 

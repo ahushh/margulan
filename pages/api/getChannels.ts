@@ -1,7 +1,7 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { IChannel } from '../../interfaces/Channel';
-import { Weaviate } from '../../models/Weaviate';
+import { Weaviate } from '../../core/Weaviate';
 const weaviateHost = process.env.WEAVIATE_HOST;
 
 export default async function handler(
